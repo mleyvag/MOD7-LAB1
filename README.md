@@ -1130,7 +1130,26 @@ def delete_poliza(request):
 EOF
 ```
 
-Pista 3: Crear Indice Compuesto en Firestore
+Pista 3: Redesplegar solo la Cloud Function list_polizas
+```bash
+echo "🚀 Redesplegando LIST con filtro tipo-cobertura..."
+gcloud functions deploy $FUNC_LIST \
+  --gen2 \
+  --runtime python311 \
+  --trigger-http \
+  --allow-unauthenticated \
+  --entry-point list_polizas \
+  --source . \
+  --region $REGION \
+  --memory 256MB \
+  --timeout 60s \
+  --set-env-vars "COLLECTION_NAME=$COLLECTION" \
+  --quiet
+
+echo "✅ Cloud Function list_polizas redesplegada"
+```
+
+Pista 4: Crear Indice Compuesto en Firestore
 
 ```bash
 gcloud firestore indexes composite create \
@@ -1142,7 +1161,7 @@ gcloud firestore indexes composite create \
 echo "✅ Índice compuesto creado (puede tardar 1-2 minutos en activarse)"
 ```
 
-Pista 4: Probar
+Pista 5: Probar
 
 ```bash
 curl -s "$API_BASE_URL/polizas?tipo-cobertura=PREMIUM" | python3 -m json.tool
